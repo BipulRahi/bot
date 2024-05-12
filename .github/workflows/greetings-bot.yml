@@ -1,0 +1,27 @@
+name: Greetings Bot
+
+on:
+  # Trigger on new pull requests and issues
+  pull_request:
+  issues:
+    types: [opened]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Greet on Pull Request
+        if: github.event.name == 'pull_request'
+        run: |
+          message="Hi @{{ github.event.pull_request.user.login }}, thanks for opening a pull request! "
+          echo "$message"
+          gh pr comment --body "$message" --json --token ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Greet on Issue
+        if: github.event.name == 'issues'
+        run: |
+          message="Hi @{{ github.event.issue.user.login }}, thanks for creating an issue! "
+          echo "$message"
+          gh issue comment --body "$message" --json --token ${{ secrets.GITHUB_TOKEN }}
